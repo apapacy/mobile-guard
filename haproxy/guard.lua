@@ -26,16 +26,16 @@ end
 function _M.validate_token_action(txn)
   local auth_header = core.tokenize(txn.sf:hdr("Authorization"), " ")
   if auth_header[1] ~= "Bearer" or not auth_header[2] then
-    return txn.set_var(txn, "txn.not_authorized", true);
+    return txn:set_var("txn.not_authorized", true);
   end
   local claim = jwt.decode(auth_header[2],{alg="RS256",keys={public=public_key}});
   if not claim then
-    return txn.set_var(txn, "txn.not_authorized", true);
+    return txn:set_var("txn.not_authorized", true);
   end
   if claim.exp < os.time() then
-    return txn.set_var(txn, "txn.authentication_timeout", true);
+    return txn:set_var("txn.authentication_timeout", true);
   end
-  txn.set_var(txn, "txn.jwt_authorized", true);
+  txn:set_var("txn.jwt_authorized", true);
 end
 
 function _M.validate_token_fetch(txn)
@@ -73,12 +73,12 @@ function _M.validate_body_fetch(txn, keys_string)
   local body = txn.f:req_body();
   status, data = pcall(json.decode, body);
   if not (status and type(data) == "table") then
-    return txn.set_var(txn, "txn.bad_request", true);
+    return txn:set_var("txn.bad_request", true);
   end
   local key = "validate:body"
   for i, name in pairs(keys) do
     if data[name] == nil or data[name] == "" then
-      return txn.set_var(txn, "txn.bad_request", true);
+      return txn:set_var("txn.bad_request", true);
     end
     key = key .. ":" .. name .. ":" .. data[name]
   end
@@ -89,12 +89,12 @@ function _M.validate_body(txn, keys, ttl, count, ip)
   local body = txn.f:req_body();
   status, data = pcall(json.decode, body);
   if not (status and type(data) == "table") then
-    return txn.set_var(txn, "txn.bad_request", true);
+    return txn:set_var("txn.bad_request", true);
   end
   local redis_key = "validate:body"
   for i, name in pairs(keys) do
     if data[name] == nil or data[name] == "" then
-      return txn.set_var(txn, "txn.bad_request", true);
+      return txn:set_var("txn.bad_request", true);
     end
     redis_key = redis_key .. ":" .. name .. ":" .. data[name]
   end
@@ -119,7 +119,7 @@ function _M.redis_incr(txn, key, ttl, count)
   status, result = pcall(client.incrby, client, prefixed_key, 1);
   tcp:close();
   if tonumber(result) > count + 0.1 then
-    txn.set_var(txn, "txn.too_many_request", true)
+    txn:set_var("txn.too_many_request", true)
     return false;
   else
     return true;
