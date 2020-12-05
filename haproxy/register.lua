@@ -2,9 +2,7 @@ package.path = package.path  .. "./?.lua;/usr/local/etc/haproxy/?.lua"
 
 local guard = require("guard")
 
-core.register_service("hello-world", "http", function(applet)
-  guard.hello_world(applet);
-end);
+core.register_service("hello-world", "http", guard.hello_world);
 
 core.register_action("validate-token", { "http-req" }, function(txn)
   guard.validate_token_action(txn);
