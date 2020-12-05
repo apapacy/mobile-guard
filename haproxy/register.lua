@@ -4,9 +4,7 @@ local guard = require("guard")
 
 core.register_service("hello-world", "http", guard.hello_world);
 
-core.register_action("validate-token", { "http-req" }, function(txn)
-  guard.validate_token_action(txn);
-end);
+core.register_action("validate-token", { "http-req" }, guard.validate_token_action);
 
 core.register_fetches("validate-token", guard.validate_token_fetch);
 
