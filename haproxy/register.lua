@@ -10,7 +10,7 @@ core.register_action("validate-token", { "http-req" }, function(txn)
   guard.validate_token_action(txn);
 end);
 
-core.register_fetches("validate-token", guard.validate_token_fetches);
+core.register_fetches("validate-token", guard.validate_token_fetch);
 
 core.register_converters("validate-token-converter", guard.validate_token_converter);
 
@@ -18,7 +18,7 @@ core.register_action("validate-body", { "http-req" }, function(txn)
   guard.validate_body(txn, {"name"}, 10, 2);
 end);
 
-core.register_fetches("validate-body", guard.validate_body_fetches);
+core.register_fetches("validate-body", guard.validate_body_fetch);
 
 core.register_service("status400", "http", function(applet)
   guard.send_response(applet, 400, {message="Bad Request"});

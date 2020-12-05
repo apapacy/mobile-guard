@@ -38,7 +38,7 @@ function _M.validate_token_action(txn)
   txn.set_var(txn, "txn.jwt_authorized", true);
 end
 
-function _M.validate_token_fetches(txn)
+function _M.validate_token_fetch(txn)
   local auth_header = core.tokenize(txn.sf:hdr("Authorization"), " ")
   if auth_header[1] ~= "Bearer" or not auth_header[2] then
     return "not_authorized";
@@ -68,7 +68,7 @@ function _M.validate_token_converter(auth_header_string)
   return "jwt_authorized";
 end
 
-function _M.validate_body_fetches(txn, keys_string)
+function _M.validate_body_fetch(txn, keys_string)
   local keys = json.decode(keys_string)
   local body = txn.f:req_body();
   status, data = pcall(json.decode, body);
