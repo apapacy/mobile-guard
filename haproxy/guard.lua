@@ -23,21 +23,6 @@ function _M.hello_world(applet)
   applet:send(response)
 end
 
-function _M.send_response(applet, status, message)
-  applet:set_status(status)
-  local response
-  if type(message) == "string" then
-    response = string.format([[<html><body>%s</body></html>]], message);
-    applet:add_header("content-type", "text/html");
-  else
-    response = json.encode(message)
-    applet:add_header("content-type", "application/json")
-  end
-  applet:add_header("content-length", string.len(response))
-  applet:start_response()
-  applet:send(response)
-end
-
 function _M.validate_token_action(txn)
   local auth_header = core.tokenize(txn.sf:hdr("Authorization"), " ")
   if auth_header[1] ~= "Bearer" or not auth_header[2] then
