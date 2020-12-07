@@ -87,7 +87,7 @@ end
 
 function _M.validate_body(txn, keys, ttl, count, ip)
   local body = txn.f:req_body();
-  status, data = pcall(json.decode, body);
+  local status, data = pcall(json.decode, body);
   if not (status and type(data) == "table") then
     return txn:set_var("txn.bad_request", true);
   end
